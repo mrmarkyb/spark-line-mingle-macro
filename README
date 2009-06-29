@@ -1,0 +1,9 @@
+spark line mingle macro
+---------------------------------
+This macro downloads 3rd party java-script to use the jquery support for downloads.
+
+example usage, see mingle macro documentation for deployment instructions.
+{{
+  spark_lines
+    query: SELECT estimate WHERE type = story
+}}
