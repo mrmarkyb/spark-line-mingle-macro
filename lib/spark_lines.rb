@@ -7,20 +7,12 @@ class SparkLines
   end
     
   def execute
-    <<-HTML
-    <span class='sparkline'>#{data}</span>    
+    <<-HTML  
+    <script type="text/javascript" src="/macros/spark-line-mingle-macro/javascript/jquery-1.3.2.min.js"></script>	
+    <script type="text/javascript" src="/macros/spark-line-mingle-macro/javascript/jquery.sparkline.patched.js"></script>
+  	<script type="text/javascript" src="/macros/spark-line-mingle-macro/javascript/mingle.sparkline.js"></script>
     <script type="text/javascript">
-    function loadJsFile(filename) {
-      var fileref=document.createElement('script');
-      fileref.setAttribute("type","text/javascript");
-      fileref.setAttribute("src", filename);
-      document.getElementsByTagName("head")[0].appendChild(fileref);
-    }    
-    loadJsFile('http://jqueryjs.googlecode.com/files/jquery-1.3.2.min.js');
-    loadJsFile('http://omnipotent.net/jquery.sparkline/1.4.2/jquery.sparkline.min.js');
-    </script> 
-    <script type="text/javascript">
-    $('.sparkline').sparkline();
+      mingle_sparkline.do_spark_line('#{target}', [#{data}], {#{options}});
     </script>  
     HTML
   end
@@ -30,8 +22,17 @@ class SparkLines
   end
   
   def data
-    @project.execute_mql(@parameters['query']).collect { |record| record.values.first }.join(",")
+    @project.execute_mql(@parameters['query']).collect { |record| record.values.first || 'null' }.join(",")
   end  
+  
+  def options
+    theoptions = (@parameters['options'] || "'type: 'line''").strip
+    theoptions[1,theoptions.length-2]
+  end
+  
+  def target
+    @parameters['target']
+  end
      
 end
 
