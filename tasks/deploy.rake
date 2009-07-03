@@ -1,23 +1,36 @@
 namespace :macro do |ns|
 
-  task :deploy do
-    macro_folder = File.expand_path(File.join(File.dirname(__FILE__), '..'))
-    mingle_plugins_folder = File.join(ENV['MINGLE_LOCATION'], 'vendor', 'plugins')
+  task :deploy => :rollback do
     FileUtils.cp_r(macro_folder, mingle_plugins_folder)
-    javascript_folder = File.join(ENV['MINGLE_LOCATION'], 'public', 'macros', File.basename(macro_folder))
-    FileUtils.rm_rf(javascript_folder) if File.exists?(javascript_folder)
-    FileUtils.mkdir_p(javascript_folder)
-    FileUtils.cp_r(File.join(macro_folder, 'javascript'), javascript_folder)
-    puts "#{macro_folder} successfully copied over to #{mingle_plugins_folder}. Restart the Mingle server to start using the macro."
+    FileUtils.mkdir_p(deployed_javascript_folder)
+    FileUtils.cp_r(local_javascript_folder, deployed_javascript_folder)
+    puts "#{macro_folder} copied over to #{deployed_macro_folder}. #{local_javascript_folder} copied over to #{deployed_javascript_folder}. Restart the Mingle server to start using the macro."
   end
   
   task :rollback do
-    macro_folder = File.expand_path(File.join(File.dirname(__FILE__), '..'))
-    plugin_folder = File.join(ENV['MINGLE_LOCATION'], 'vendor', 'plugins', File.basename(macro_folder))
-    javascript_folder = File.join(ENV['MINGLE_LOCATION'], 'public', 'macros', File.basename(macro_folder))
-    FileUtils.rm_rf(plugin_folder) if File.exists?(plugin_folder)
-    FileUtils.rm_rf(javascript_folder) if File.exists?(javascript_folder)    
-    puts "#{plugin_folder} and #{javascript_folder} successfully removed. Restart the Mingle server to ensure the macro is removed."
+    FileUtils.rm_rf(deployed_macro_folder) if File.exists?(deployed_macro_folder)
+    FileUtils.rm_rf(deployed_javascript_folder) if File.exists?(deployed_javascript_folder)    
+    puts "#{deployed_macro_folder} and #{deployed_javascript_folder} successfully removed. Restart the Mingle server to ensure the macro is removed."
+  end
+  
+  def macro_folder
+    File.expand_path(File.join(File.dirname(__FILE__), '..'))
+  end
+
+  def mingle_plugins_folder
+    File.join(ENV['MINGLE_LOCATION'], 'vendor', 'plugins')
+  end
+  
+  def deployed_macro_folder
+    File.join(ENV['MINGLE_LOCATION'], 'vendor', 'plugins', File.basename(macro_folder))
+  end
+  
+  def local_javascript_folder
+    File.join(macro_folder, 'javascript')
+  end
+    
+  def deployed_javascript_folder
+    File.join(ENV['MINGLE_LOCATION'], 'public', 'macros', File.basename(macro_folder))
   end
   
 end
