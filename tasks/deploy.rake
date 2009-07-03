@@ -10,5 +10,14 @@ namespace :macro do |ns|
     FileUtils.cp_r(File.join(macro_folder, 'javascript'), javascript_folder)
     puts "#{macro_folder} successfully copied over to #{mingle_plugins_folder}. Restart the Mingle server to start using the macro."
   end
-
+  
+  task :rollback do
+    macro_folder = File.expand_path(File.join(File.dirname(__FILE__), '..'))
+    plugin_folder = File.join(ENV['MINGLE_LOCATION'], 'vendor', 'plugins', File.basename(macro_folder))
+    javascript_folder = File.join(ENV['MINGLE_LOCATION'], 'public', 'macros', File.basename(macro_folder))
+    FileUtils.rm_rf(plugin_folder) if File.exists?(plugin_folder)
+    FileUtils.rm_rf(javascript_folder) if File.exists?(javascript_folder)    
+    puts "#{plugin_folder} and #{javascript_folder} successfully removed. Restart the Mingle server to ensure the macro is removed."
+  end
+  
 end
