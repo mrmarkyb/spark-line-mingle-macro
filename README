@@ -1,5 +1,7 @@
 spark line mingle macro
 ---------------------------------
+(please see license file ./LICENSE)
+
 This macro downloads 3rd party java-script to use the jquery support for downloads.
 It is a very light wrapper around JQuery sparklines found at http://omnipotent.net/jquery.sparkline/ for more details on available 'options' values refer to this api.
 note: This macro has an adapted rake deployment, to allow javascript files to be placed in mingles public folder and be accessible from the browser 
